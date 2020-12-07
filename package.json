@@ -1,0 +1,26 @@
+{
+  "name": "snake-game",
+  "version": "1.0.0",
+  "description": "Snake game implementation with js and html canvas",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack serve",
+    "build": "webpack"
+  },
+  "keywords": [
+    "snake",
+    "game",
+    "javascript",
+    "canvas",
+    "html"
+  ],
+  "author": "Caio Ferrarezi",
+  "license": "MIT",
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^5.10.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
