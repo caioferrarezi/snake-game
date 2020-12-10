@@ -1,29 +1,31 @@
-const SCREEN = document.querySelector('#screen')
+import { FPS } from './game/constants'
 
-const WIDTH = SCREEN.width
-const HEIGHT = SCREEN.height
-const PIXEL_SIZE = 1
+import Game from './game'
 
-const context = SCREEN.getContext('2d')
+const game = new Game(screen);
 
-const colors = {
-  background: '#F7F7FF',
-  snake: '#070600',
-  fruit: '#EA526F'
+let start, now, then, elapsed, interval;
+
+function setup() {
+  interval = 1000 / FPS;
+  then = Date.now();
+  start = then;
+
+  draw();
 }
 
-function clearScreen() {
-  context.fillStyle = colors.background
-  context.fillRect(0, 0, WIDTH, HEIGHT)
+function draw() {
+  requestAnimationFrame(draw);
+
+  now = Date.now();
+  elapsed = now - then;
+
+  if (elapsed > interval) {
+    then = now - (elapsed % interval);
+
+    game.update();
+    game.show();
+  }
 }
 
-function start() {
-  clearScreen()
-
-  context.fillStyle = colors.snake
-  context.fillRect(1, 1, PIXEL_SIZE, PIXEL_SIZE)
-
-  requestAnimationFrame(start)
-}
-
-start()
+setup()
