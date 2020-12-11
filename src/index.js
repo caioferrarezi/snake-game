@@ -1,6 +1,5 @@
-import { FPS } from './game/constants'
-
-import Game from './game'
+import { FPS } from 'utils/constants';
+import Game from 'game';
 
 const game = new Game(screen);
 

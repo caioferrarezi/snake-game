@@ -9,6 +9,10 @@ module.exports = {
     filename: '[name]-[hash].js',
     path: path.resolve(__dirname, 'dist')
   },
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    extensions: ['.js']
+  },
   module: {
     rules: [{
       test: /\.m?js$/,

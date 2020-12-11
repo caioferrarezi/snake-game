@@ -1,17 +1,36 @@
-import { COLORS } from './constants'
-
+import canvas from 'utils/canvas';
+import { COLORS, PIXEL_SIZE } from 'utils/constants';
 export default class Snake {
-  constructor(screen, context) {
-    this.screen = screen;
-    this.context = context;
+  constructor() {
+    this._body = [];
+    this._pos = { x: 0, y: 0 };
+    this._vel = { x: 0, y: 0 };
 
-    this.body = [];
+    this._size = PIXEL_SIZE;
+    this._color = COLORS.snake;
 
-    this.size = 10;
-    this.pos = { x: 0, y: 0 };
-    this.vel = { x: 0, y: 0 };
+    this.init();
+  }
 
-    this.body.push({ ...this.pos });
+  get keyEvents() {
+    return {
+      'ArrowUp': () => {
+        this._vel = { x: 0, y: -this._size };
+      },
+      'ArrowDown': () => {
+        this._vel = { x: 0, y: this._size };
+      },
+      'ArrowLeft': () => {
+        this._vel = { x: -this._size, y: 0 };
+      },
+      'ArrowRight': () => {
+        this._vel = { x: this._size, y: 0 };
+      }
+    }
+  }
+
+  init() {
+    this._body.push(this._pos);
 
     window.addEventListener('keyup', ({ key }) => {
       if (this.keyEvents[key] instanceof Function)
@@ -19,53 +38,47 @@ export default class Snake {
     })
   }
 
-  get keyEvents() {
-    return {
-      'ArrowUp': () => {
-        this.vel = { x: 0, y: -this.size };
-      },
-      'ArrowDown': () => {
-        this.vel = { x: 0, y: this.size };
-      },
-      'ArrowLeft': () => {
-        this.vel = { x: -this.size, y: 0 };
-      },
-      'ArrowRight': () => {
-        this.vel = { x: this.size, y: 0 };
-      }
-    }
-  }
-
   handleScreenIntersection() {
-    if (this.pos.x + this.size > this.screen.width) {
-      this.pos.x = -this.size;
-    } else if (this.pos.x < 0) {
-      this.pos.x = this.screen.width;
-    } else if (this.pos.y + this.size > this.screen.height) {
-      this.pos.y = -this.size;
-    } else if (this.pos.y < 0) {
-      this.pos.y = this.screen.height;
+    if (this._pos.x + this._size > canvas.width) {
+      this._pos.x = -this._size;
+    } else if (this._pos.x < 0) {
+      this._pos.x = canvas.width;
+    } else if (this._pos.y + this._size > canvas.height) {
+      this._pos.y = -this._size;
+    } else if (this._pos.y < 0) {
+      this._pos.y = canvas.height;
     }
   }
 
-  eat() {}
+  eat(fruit) {
+    if (
+      this._pos.x === fruit.pos.x &&
+      this._pos.y === fruit.pos.y
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  grow() {
+    this._body.push({ ...this._pos });
+  }
 
   update() {
     this.handleScreenIntersection();
 
-    this.eat();
+    this._pos.x += this._vel.x;
+    this._pos.y += this._vel.y;
 
-    this.pos.x += this.vel.x;
-    this.pos.y += this.vel.y;
-
-    this.body.shift();
-    this.body.push({ ...this.pos })
+    this._body.shift();
+    this._body.push({ ...this._pos })
   }
 
   show() {
-    for (let i = 0; i < this.body.length; i++) {
-      this.context.fillStyle = COLORS.SNAKE;
-      this.context.fillRect(this.body[i].x, this.body[i].y, this.size, this.size);
+    for (let i = 0; i < this._body.length; i++) {
+      canvas.context.fillStyle = this._color;
+      canvas.context.fillRect(this._body[i].x, this._body[i].y, this._size, this._size);
     }
   }
 }

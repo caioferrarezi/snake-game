@@ -1,25 +1,39 @@
-import { COLORS } from './constants';
+import canvas from 'utils/canvas';
+import { COLORS } from 'utils/constants';
 
-import Snake from './snake';
+import Snake from 'game/snake';
+import Fruit from 'game/fruit';
 
 export default class Game {
   constructor() {
-    this.screen = document.querySelector('#screen');
-    this.context = this.screen.getContext('2d');
-    this.snake = new Snake(this.screen, this.context);
+    this.init();
+
+    this.snake = new Snake();
+    this.fruit = new Fruit();
+  }
+
+  init() {
+    canvas.create(400, 400);
   }
 
   clearScreen() {
-    this.context.fillStyle = COLORS.BACKGROUND;
-    this.context.fillRect(0, 0, screen.width, screen.height);
+    canvas.context.fillStyle = COLORS.background;
+    canvas.context.fillRect(0, 0, canvas.width, canvas.height);
   }
 
   update() {
     this.snake.update();
+
+    if (this.snake.eat(this.fruit)) {
+      this.snake.grow();
+      this.fruit.update();
+    }
   }
 
   show() {
     this.clearScreen();
+
     this.snake.show();
+    this.fruit.show();
   }
 }
