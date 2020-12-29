@@ -5,14 +5,14 @@ export default class Fruit {
   constructor () {
     this._size = PIXEL_SIZE;
     this._color = COLORS.fruit;
-    this._pos = this.getRandomPosition();
+    this._pos = this._getRandomPosition();
   }
 
   get pos() {
     return { ...this._pos };
   }
 
-  getRandomPosition() {
+  _getRandomPosition() {
     const randomX = Math.floor(Math.random() * canvas.width);
     const randomY = Math.floor(Math.random() * canvas.height);
 
@@ -23,7 +23,7 @@ export default class Fruit {
   }
 
   update() {
-    this._pos = this.getRandomPosition()
+    this._pos = this._getRandomPosition()
   }
 
   show() {
