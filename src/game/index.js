@@ -4,31 +4,42 @@ import { COLORS, KEYS } from 'utils/constants';
 import Snake from 'game/snake';
 import Fruit from 'game/fruit';
 
+import GameOverScreen from 'game/screens/game-over';
+
 export default class Game {
   constructor() {
-    canvas.create(400, 400);
+    canvas.create(800, 600);
 
     this._init();
   }
 
   _init() {
+    this._state = 'playing';
     this._score = 0;
-    this._gameOver = false;
 
     this._snake = new Snake();
     this._fruit = new Fruit();
 
-    this._setControls();
-    this._updateScore();
-  }
+    this._gameOverScreen = new GameOverScreen();
 
-  _setControls() {
-    window.onkeydown = this._onKeyDown.bind(this)
+    this._setControls();
   }
 
   _clear() {
     canvas.context.fillStyle = COLORS.BACKGROUND;
     canvas.context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  _showScore() {
+    canvas.context.fillStyle = '#222222';
+    canvas.context.textAlign = 'left';
+    canvas.context.textBaseline = 'top';
+    canvas.context.font = `32px VT323, monospace`;
+    canvas.context.fillText(`Score: ${this._score}`, canvas.pixelSize, canvas.pixelSize);
+  }
+
+  _setControls() {
+    window.onkeydown = this._onKeyDown.bind(this)
   }
 
   _onKeyDown({ keyCode, preventDefault }) {
@@ -55,19 +66,13 @@ export default class Game {
     }
   }
 
-  _updateScore() {
-    const score = this._score;
-
-    document.dispatchEvent(new CustomEvent('score', { detail: { score } }));
-  }
-
   update() {
-    if (this._gameOver) return
+    if (this._state !== 'playing') return;
 
     this._snake.update();
 
     if (this._snake.collide()) {
-      this._gameOver = true
+      this._state = 'game-over';
     }
 
     if (this._snake.eat(this._fruit.x, this._fruit.y)) {
@@ -79,14 +84,18 @@ export default class Game {
       }
 
       this._score++;
-      this._updateScore();
     }
   }
 
   show() {
-    if (this._gameOver) return;
-
     this._clear();
+
+    if (this._state === 'game-over') {
+      this._gameOverScreen.show(this._score);
+      return;
+    }
+
+    this._showScore();
 
     this._snake.show();
     this._fruit.show();

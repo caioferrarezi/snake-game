@@ -1,5 +1,5 @@
 import canvas from 'utils/canvas';
-import { COLORS, PIXEL_SIZE, KEYS } from 'utils/constants';
+import { COLORS, KEYS } from 'utils/constants';
 
 import BodyPiece from 'game/snake/body-piece'
 
@@ -8,7 +8,7 @@ export default class Snake {
     this._pos = canvas.getRandomPosition();
     this._vel = { x: 0, y: 0 };
 
-    this._size = PIXEL_SIZE;
+    this._size = canvas.pixelSize;
     this._color = COLORS.SNAKE;
 
     this._init();

@@ -1,9 +1,9 @@
 import canvas from 'utils/canvas';
-import { COLORS, PIXEL_SIZE } from 'utils/constants';
+import { COLORS } from 'utils/constants';
 
 export default class Fruit {
   constructor () {
-    this._size = PIXEL_SIZE;
+    this._size = canvas.pixelSize;
     this._color = COLORS.FRUIT;
     this._pos = canvas.getRandomPosition();
   }

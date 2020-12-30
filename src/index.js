@@ -1,13 +1,7 @@
 import { FPS } from 'utils/constants';
 import Game from 'game';
 
-const score = document.querySelector('#score');
-
-document.addEventListener('score', ({ detail }) => {
-  score.innerText = `Score: ${detail.score}`
-})
-
-const game = new Game(screen);
+const game = new Game();
 
 let time1 = Date.now();
 let time2 = Date.now();
