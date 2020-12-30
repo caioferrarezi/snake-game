@@ -1,86 +1,144 @@
 import canvas from 'utils/canvas';
-import input from 'utils/input';
 import { COLORS, PIXEL_SIZE, KEYS } from 'utils/constants';
+
+import BodyPiece from 'game/snake/body-piece'
 
 export default class Snake {
   constructor() {
-    this._body = [];
-    this._pos = { x: 0, y: 0 };
+    this._pos = canvas.getRandomPosition();
     this._vel = { x: 0, y: 0 };
 
     this._size = PIXEL_SIZE;
-    this._color = COLORS.snake;
+    this._color = COLORS.SNAKE;
 
     this._init();
   }
 
   _init() {
-    this._body.push(this._pos);
+    const { x, y } = this._pos
+
+    this._head = null;
+    this._tail = null;
+
+    this._push(x, y);
   }
 
-  _move() {
-    if (input.is(KEYS.LEFT))
-      this._moveLeft();
+  _push(x, y) {
+    if (!this._head) {
+      this._head = new BodyPiece(x, y);
 
-    if (input.is(KEYS.UP))
-      this._moveUp();
+      return;
+    }
 
-    if (input.is(KEYS.RIGHT))
-      this._moveRight();
+    let cur = this._head;
 
-    if (input.is(KEYS.DOWN))
-      this._moveDown();
+    while (cur.next !== null) {
+      cur = cur.next;
+    }
+
+    cur.next = new BodyPiece(x, y);
   }
 
-  _moveLeft() {
+  _add(x, y) {
+    let cur = this._head;
+
+    this._head = new BodyPiece(x, y, cur);
+  }
+
+  _pop() {
+    let cur = this._head;
+    let prev = null;
+
+    while (cur.next !== null) {
+      prev = cur;
+      cur = cur.next;
+    }
+
+    prev.next = cur.next;
+  }
+
+  moveLeft() {
+    if (this._vel.x === this._size) return;
+
     this._vel = { x: -this._size, y: 0 };
   }
 
-  _moveUp() {
+  moveUp() {
+    if (this._vel.y === this._size) return;
+
     this._vel = { x: 0, y: -this._size };
   }
 
-  _moveRight() {
+  moveRight() {
+    if (this._vel.x === -this._size) return;
+
     this._vel = { x: this._size, y: 0 };
   }
 
-  _moveDown() {
+  moveDown() {
+    if (this._vel.y === -this._size) return;
+
     this._vel = { x: 0, y: this._size };
   }
 
-  collide() {
-    return (
-      this._pos.x < 0 ||
-      this._pos.y < 0 ||
-      this._pos.x + this._size > canvas.width ||
-      this._pos.y + this._size > canvas.height
-    );
+  is(x, y) {
+    let cur = this._head.next;
 
-    // TODO collide with itself
+    if (!cur) return false;
+
+    while (cur.next !== null) {
+      if (cur.x === x && cur.y === y)
+        return true;
+
+      cur = cur.next;
+    }
+
+    return false;
   }
 
-  eat(fruit) {
-    return this._pos.x === fruit.pos.x && this._pos.y === fruit.pos.y;
+  collide() {
+    const { x, y } = this._head;
+
+    if (
+      x < 0 || x + this._size > canvas.width ||
+      y < 0 || y + this._size > canvas.height
+    ) return true
+
+    return this.is(x, y);
+  }
+
+  eat(x, y) {
+    return this._head.x === x && this._head.y === y;
   }
 
   grow() {
-    this._body.push({ ...this._pos });
+    let cur = this._head;
+
+    while (cur.next !== null) {
+      cur = cur.next;
+    }
+
+    for (let i = 0 ; i < 5; i++) {
+      this._push(cur.x, cur.y);
+    }
   }
 
   update() {
-    this._move();
-
     this._pos.x += this._vel.x;
     this._pos.y += this._vel.y;
 
-    this._body.push({ ...this._pos });
-    this._body.shift();
+    this._add(this._pos.x, this._pos.y);
+    this._pop();
   }
 
   show() {
-    for (let pixel of this._body) {
+    let cur = this._head
+
+    while (cur !== null) {
       canvas.context.fillStyle = this._color;
-      canvas.context.fillRect(pixel.x, pixel.y, this._size, this._size);
+      canvas.context.fillRect(cur.x, cur.y, this._size, this._size);
+
+      cur = cur.next;
     }
   }
 }

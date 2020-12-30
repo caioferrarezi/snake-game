@@ -1,3 +1,5 @@
+import { PIXEL_SIZE } from 'utils/constants';
+
 let canvas;
 
 class Canvas {
@@ -7,11 +9,10 @@ class Canvas {
   }
 
   create(width, height) {
-    this._screen = document.createElement('canvas');
+    this._screen = document.querySelector("#screen");
+
     this._screen.width = width;
     this._screen.height = height;
-
-    document.body.insertAdjacentElement('afterbegin', this._screen);
 
     this._context = this._screen.getContext('2d');
   }
@@ -26,6 +27,16 @@ class Canvas {
 
   get context() {
     return this._context;
+  }
+
+  getRandomPosition() {
+    const randomX = Math.floor(Math.random() * this.width);
+    const randomY = Math.floor(Math.random() * this.height);
+
+    const x = randomX - (randomX % PIXEL_SIZE);
+    const y = randomY - (randomY % PIXEL_SIZE);
+
+    return { x, y };
   }
 }
 
