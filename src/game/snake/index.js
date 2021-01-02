@@ -26,35 +26,34 @@ export default class Snake {
   _push(x, y) {
     if (!this._head) {
       this._head = new BodyPiece(x, y);
+      this._tail = this._head;
 
       return;
     }
 
-    let cur = this._head;
+    let tail = new BodyPiece(x, y, this._tail, null);
+    this._tail.next = tail;
 
-    while (cur.next !== null) {
-      cur = cur.next;
-    }
-
-    cur.next = new BodyPiece(x, y);
+    this._tail = tail;
   }
 
   _add(x, y) {
-    let cur = this._head;
+    if (!this._head) {
+      this._head = new BodyPiece(x, y);
+      this._tail = this._head;
 
-    this._head = new BodyPiece(x, y, cur);
+      return;
+    }
+
+    let head = new BodyPiece(x, y, null, this._head);
+    this._head.prev = head;
+
+    this._head = head;
   }
 
   _pop() {
-    let cur = this._head;
-    let prev = null;
-
-    while (cur.next !== null) {
-      prev = cur;
-      cur = cur.next;
-    }
-
-    prev.next = cur.next;
+    this._tail = this._tail.prev;
+    this._tail.next = null;
   }
 
   moveLeft() {
@@ -112,14 +111,10 @@ export default class Snake {
   }
 
   grow() {
-    let cur = this._head;
-
-    while (cur.next !== null) {
-      cur = cur.next;
-    }
+    let tail = this._tail
 
     for (let i = 0 ; i < 5; i++) {
-      this._push(cur.x, cur.y);
+      this._push(tail.x, tail.y);
     }
   }
 
