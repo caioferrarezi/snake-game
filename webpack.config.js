@@ -1,16 +1,16 @@
-const path = require('path')
+const path = require('path');
 
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = env => {
   return {
-    mode: env.NODE_ENV,
-    devtool: 'inline-source-map',
+    mode: env.production ? 'production' : 'development',
+    devtool: env.production ? 'source-map' : 'inline-source-map',
     entry: './src/index.js',
     output: {
       filename: '[name]-[hash].js',
-      path: path.resolve(__dirname, 'demo')
+      path: path.resolve(__dirname, env.production ? 'demo' : 'dist')
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],

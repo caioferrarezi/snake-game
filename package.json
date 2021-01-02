@@ -4,8 +4,8 @@
   "description": "Snake game implementation with js and html canvas",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack serve --env NODE_ENV=development",
-    "build": "webpack --env NODE_ENV=production"
+    "dev": "webpack serve --env development",
+    "build": "webpack --env production"
   },
   "keywords": [
     "snake",
