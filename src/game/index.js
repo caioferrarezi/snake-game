@@ -71,11 +71,11 @@ export default class Game {
 
     this._snake.update();
 
-    if (this._snake.collide()) {
+    if (this._snake.hitWall() || this._snake.bitten()) {
       this._state = 'game-over';
     }
 
-    if (this._snake.eat(this._fruit.x, this._fruit.y)) {
+    if (this._snake.eat(this._fruit)) {
       this._snake.grow();
       this._fruit.update();
 

@@ -5,7 +5,7 @@ const game = new Game();
 
 let time1 = Date.now();
 let time2 = Date.now();
-let elapsed = 0;
+let elapsedTime = 0;
 
 let frameCount = 0;
 
@@ -17,9 +17,9 @@ function setup() {
 
 function draw() {
   time2 = Date.now();
-  elapsed = time2 - time1;
+  elapsedTime = time2 - time1;
 
-  if (elapsed > 100) {
+  if (elapsedTime > 100) {
     time1 = time2;
 
     game.update();
@@ -29,4 +29,4 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-setup()
+setup();

@@ -81,37 +81,39 @@ export default class Snake {
   }
 
   is(x, y) {
-    let cur = this._head.next;
-
-    if (!cur) return false;
-
-    while (cur.next !== null) {
+    for (let cur = this._head.next; cur !== null && cur.next !== null; cur = cur.next) {
       if (cur.x === x && cur.y === y)
         return true;
-
-      cur = cur.next;
     }
 
     return false;
   }
 
-  collide() {
-    const { x, y } = this._head;
-
-    if (
-      x < 0 || x + this._size > canvas.width ||
-      y < 0 || y + this._size > canvas.height
-    ) return true
+  bitten() {
+    let { x, y } = this._head;
 
     return this.is(x, y);
   }
 
-  eat(x, y) {
-    return this._head.x === x && this._head.y === y;
+  hitWall() {
+    const { x, y } = this._head;
+
+    return (
+      x < 0 ||
+      y < 0 ||
+      x > canvas.width - canvas.pixelSize ||
+      y > canvas.height - canvas.pixelSize
+    )
+  }
+
+  eat(fruit) {
+    const { x, y } = this._head;
+
+    return x === fruit.x && y === fruit.y;
   }
 
   grow() {
-    let tail = this._tail
+    let tail = this._tail;
 
     for (let i = 0 ; i < 5; i++) {
       this._push(tail.x, tail.y);
@@ -127,13 +129,9 @@ export default class Snake {
   }
 
   show() {
-    let cur = this._head
-
-    while (cur !== null) {
+    for (let cur = this._head; cur !== null; cur = cur.next) {
       canvas.context.fillStyle = this._color;
       canvas.context.fillRect(cur.x, cur.y, this._size, this._size);
-
-      cur = cur.next;
     }
   }
 }
