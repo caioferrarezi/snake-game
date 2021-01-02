@@ -4,7 +4,8 @@ import { COLORS, KEYS } from 'utils/constants';
 import Snake from 'game/snake';
 import Fruit from 'game/fruit';
 
-import GameOverScreen from 'game/screens/game-over';
+import collect from 'assets/collect.wav';
+import hit from 'assets/hit.wav'
 
 export default class Game {
   constructor() {
@@ -20,7 +21,8 @@ export default class Game {
     this._snake = new Snake();
     this._fruit = new Fruit();
 
-    this._gameOverScreen = new GameOverScreen();
+    this._collectSound = new Audio(collect);
+    this._hitSound = new Audio(hit);
 
     this._setControls();
   }
@@ -36,6 +38,19 @@ export default class Game {
     canvas.context.textBaseline = 'top';
     canvas.context.font = `32px VT323, monospace`;
     canvas.context.fillText(`Score: ${this._score}`, canvas.pixelSize, canvas.pixelSize);
+  }
+
+  _showFinishedScreen() {
+    const x = canvas.width / 2;
+    const y = canvas.height / 2;
+
+    canvas.context.fillStyle = '#222222';
+    canvas.context.textAlign = 'center';
+    canvas.context.textBaseline = 'middle';
+    canvas.context.font = `normal 48px VT323, monospace`;
+    canvas.context.fillText(`You've scored: ${this._score}`, x, y - 30);
+    canvas.context.font = `normal 32px VT323, monospace`;
+    canvas.context.fillText(`Press [Enter] or [Space] to restart`, x, y + 30);
   }
 
   _setControls() {
@@ -60,9 +75,17 @@ export default class Game {
     }
 
     if (KEYS.ACTION.includes(keyCode)) {
-      if (this._gameOver === false) return;
-
-      this._init();
+      switch(this._state) {
+      case 'finished':
+        this._init();
+        break;
+      case 'playing':
+        this._state = 'paused';
+        break;
+      case 'paused':
+        this._state = 'playing';
+        break;
+      }
     }
   }
 
@@ -72,7 +95,8 @@ export default class Game {
     this._snake.update();
 
     if (this._snake.hitWall() || this._snake.bitten()) {
-      this._state = 'game-over';
+      this._state = 'finished';
+      this._hitSound.play();
     }
 
     if (this._snake.eat(this._fruit)) {
@@ -84,20 +108,24 @@ export default class Game {
       }
 
       this._score++;
+      this._collectSound.play();
     }
   }
 
   show() {
     this._clear();
 
-    if (this._state === 'game-over') {
-      this._gameOverScreen.show(this._score);
-      return;
+    switch(this._state) {
+    case 'finished':
+      this._showFinishedScreen();
+      break;
+    case 'playing':
+    case 'paused':
+      this._showScore();
+
+      this._snake.show();
+      this._fruit.show();
+      break;
     }
-
-    this._showScore();
-
-    this._snake.show();
-    this._fruit.show();
   }
 }

@@ -26,6 +26,9 @@ module.exports = env => {
             presets: ['@babel/preset-env']
           }
         }
+      }, {
+        test: /\.(wav)$/i,
+        loader: 'file-loader'
       }],
     },
     plugins: [
