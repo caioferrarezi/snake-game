@@ -1,4 +1,4 @@
-import canvas from 'utils/canvas';
+import canvas from 'canvas';
 import { COLORS } from 'utils/constants';
 
 export default class Fruit {

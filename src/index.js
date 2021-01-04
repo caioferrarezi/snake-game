@@ -1,32 +1,43 @@
-import { FPS } from 'utils/constants';
+import { ELAPSED_INTERVAL } from 'utils/constants';
+
+import canvas from 'canvas';
 import Game from 'game';
 
-const game = new Game();
+import 'assets/style/index.css';
 
-let time1 = Date.now();
-let time2 = Date.now();
+let game = null;
+
+let oldTimeStamp = 0;
 let elapsedTime = 0;
 
-let frameCount = 0;
+function onKeyDown(event) {
+  game.onKeyPressed(event.keyCode);
+}
 
 function setup() {
-  frameCount = 0;
+  canvas.create();
 
-  draw();
+  game = new Game();
+
+  document.addEventListener('keydown', onKeyDown);
+
+  requestAnimationFrame(loop);
 }
 
 function draw() {
-  time2 = Date.now();
-  elapsedTime = time2 - time1;
+  game.update();
+  game.show();
+}
 
-  if (elapsedTime > 100) {
-    time1 = time2;
+function loop(timeStamp) {
+  elapsedTime = (timeStamp - oldTimeStamp);
 
-    game.update();
-    game.show();
+  if (elapsedTime > ELAPSED_INTERVAL) {
+    oldTimeStamp = timeStamp;
+    draw();
   }
 
-  requestAnimationFrame(draw);
+  requestAnimationFrame(loop);
 }
 
 setup();

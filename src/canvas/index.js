@@ -1,4 +1,4 @@
-import { PIXEL_SIZE } from 'utils/constants';
+import { WIDTH, HEIGHT, PIXEL_SIZE } from 'utils/constants';
 
 let canvas;
 
@@ -9,13 +9,13 @@ class Canvas {
     this._pixelSize;
   }
 
-  create(width, height) {
+  create() {
     this._screen = document.createElement('canvas');
 
-    this._screen.width = width;
-    this._screen.height = height;
+    this._screen.width = WIDTH;
+    this._screen.height = HEIGHT;
 
-    this._pixelSize = Math.ceil(width / height) * 10;
+    this._pixelSize = PIXEL_SIZE;
 
     this._context = this._screen.getContext('2d');
 

@@ -1,4 +1,8 @@
-export const PIXEL_SIZE = 15;
+export const WIDTH = 800;
+export const HEIGHT = 600;
+export const PIXEL_SIZE = 20;
+
+export const ELAPSED_INTERVAL = 100;
 
 export const COLORS = {
   BACKGROUND: '#F7F7FF',

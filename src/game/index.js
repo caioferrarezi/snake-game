@@ -1,16 +1,14 @@
-import canvas from 'utils/canvas';
+import canvas from 'canvas';
 import { COLORS, KEYS } from 'utils/constants';
 
 import Snake from 'game/snake';
 import Fruit from 'game/fruit';
 
-import collect from 'assets/collect.wav';
-import hit from 'assets/hit.wav'
+import collect from 'assets/audio/collect.wav';
+import hit from 'assets/audio/hit.wav';
 
 export default class Game {
   constructor() {
-    canvas.create(800, 600);
-
     this._init();
   }
 
@@ -21,10 +19,15 @@ export default class Game {
     this._snake = new Snake();
     this._fruit = new Fruit();
 
+    this._createAudios();
+  }
+
+  _createAudios() {
     this._collectSound = new Audio(collect);
     this._hitSound = new Audio(hit);
 
-    this._setControls();
+    this._collectSound.volume = 0.2;
+    this._hitSound.volume = 0.2;
   }
 
   _clear() {
@@ -36,7 +39,7 @@ export default class Game {
     canvas.context.fillStyle = '#222222';
     canvas.context.textAlign = 'left';
     canvas.context.textBaseline = 'top';
-    canvas.context.font = `32px VT323, monospace`;
+    canvas.context.font = `${canvas.pixelSize}px RetroGaming, monospace`;
     canvas.context.fillText(`Score: ${this._score}`, canvas.pixelSize, canvas.pixelSize);
   }
 
@@ -47,17 +50,13 @@ export default class Game {
     canvas.context.fillStyle = '#222222';
     canvas.context.textAlign = 'center';
     canvas.context.textBaseline = 'middle';
-    canvas.context.font = `normal 48px VT323, monospace`;
+    canvas.context.font = `normal ${canvas.pixelSize * 2}px RetroGaming, monospace`;
     canvas.context.fillText(`You've scored: ${this._score}`, x, y - 30);
-    canvas.context.font = `normal 32px VT323, monospace`;
+    canvas.context.font = `normal ${canvas.pixelSize}px RetroGaming, monospace`;
     canvas.context.fillText(`Press [Enter] or [Space] to restart`, x, y + 30);
   }
 
-  _setControls() {
-    window.onkeydown = this._onKeyDown.bind(this)
-  }
-
-  _onKeyDown({ keyCode, preventDefault }) {
+  onKeyPressed(keyCode) {
     if (KEYS.LEFT.includes(keyCode)) {
       return this._snake.moveLeft();
     }
@@ -95,8 +94,8 @@ export default class Game {
     this._snake.update();
 
     if (this._snake.hitWall() || this._snake.bitten()) {
-      this._state = 'finished';
       this._hitSound.play();
+      this._state = 'finished';
     }
 
     if (this._snake.eat(this._fruit)) {
@@ -107,8 +106,8 @@ export default class Game {
         this._fruit.update();
       }
 
-      this._score++;
       this._collectSound.play();
+      this._score++;
     }
   }
 

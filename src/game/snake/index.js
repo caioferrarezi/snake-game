@@ -1,4 +1,4 @@
-import canvas from 'utils/canvas';
+import canvas from 'canvas';
 import { COLORS, KEYS } from 'utils/constants';
 
 import BodyPiece from 'game/snake/body-piece'
@@ -6,7 +6,9 @@ import BodyPiece from 'game/snake/body-piece'
 export default class Snake {
   constructor() {
     this._pos = canvas.getRandomPosition();
-    this._vel = { x: 0, y: 0 };
+
+    this._nextVel = { x: 0, y: 0 };
+    this._vel = this._nextVel;
 
     this._size = canvas.pixelSize;
     this._color = COLORS.SNAKE;
@@ -57,27 +59,39 @@ export default class Snake {
   }
 
   moveLeft() {
-    if (this._vel.x === this._size) return;
+    if (
+      this._head.next &&
+      this._vel.x === this._size
+    ) return;
 
-    this._vel = { x: -this._size, y: 0 };
+    this._nextVel = { x: -this._size, y: 0 };
   }
 
   moveUp() {
-    if (this._vel.y === this._size) return;
+    if (
+      this._head.next &&
+      this._vel.y === this._size
+    ) return;
 
-    this._vel = { x: 0, y: -this._size };
+    this._nextVel = { x: 0, y: -this._size };
   }
 
   moveRight() {
-    if (this._vel.x === -this._size) return;
+    if (
+      this._head.next &&
+      this._vel.x === -this._size
+    ) return;
 
-    this._vel = { x: this._size, y: 0 };
+    this._nextVel = { x: this._size, y: 0 };
   }
 
   moveDown() {
-    if (this._vel.y === -this._size) return;
+    if (
+      this._head.next &&
+      this._vel.y === -this._size
+    ) return;
 
-    this._vel = { x: 0, y: this._size };
+    this._nextVel = { x: 0, y: this._size };
   }
 
   is(x, y) {
@@ -121,6 +135,8 @@ export default class Snake {
   }
 
   update() {
+    this._vel = this._nextVel;
+
     this._pos.x += this._vel.x;
     this._pos.y += this._vel.y;
 
