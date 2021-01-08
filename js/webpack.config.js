@@ -10,7 +10,7 @@ module.exports = env => {
     entry: './src/index.js',
     output: {
       filename: '[name]-[hash].js',
-      path: path.resolve(__dirname, env.production ? 'demo' : 'dist')
+      path: path.resolve(__dirname, env.production ? '../demo' : 'dist')
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
