@@ -36,7 +36,7 @@ export default class Game {
   }
 
   _showScore() {
-    canvas.context.fillStyle = '#222222';
+    canvas.context.fillStyle = COLORS.TEXT;
     canvas.context.textAlign = 'left';
     canvas.context.textBaseline = 'top';
     canvas.context.font = `${canvas.pixelSize}px RetroGaming, monospace`;
@@ -47,7 +47,7 @@ export default class Game {
     const x = canvas.width / 2;
     const y = canvas.height / 2;
 
-    canvas.context.fillStyle = '#222222';
+    canvas.context.fillStyle = COLORS.TEXT;
     canvas.context.textAlign = 'center';
     canvas.context.textBaseline = 'middle';
     canvas.context.font = `normal ${canvas.pixelSize * 2}px RetroGaming, monospace`;
@@ -120,10 +120,9 @@ export default class Game {
       break;
     case 'playing':
     case 'paused':
-      this._showScore();
-
       this._snake.show();
       this._fruit.show();
+      this._showScore();
       break;
     }
   }

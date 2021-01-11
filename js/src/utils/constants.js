@@ -5,9 +5,10 @@ export const PIXEL_SIZE = 20;
 export const ELAPSED_INTERVAL = 100;
 
 export const COLORS = {
-  BACKGROUND: '#F7F7FF',
-  SNAKE: '#070600',
-  FRUIT: '#EA526F'
+  BACKGROUND: '#222222',
+  SNAKE: '#ecebe4',
+  TEXT: '#57b27c',
+  FRUIT: '#ef233c'
 }
 
 export const KEYS = {
