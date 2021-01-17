@@ -1,5 +1,5 @@
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
 
 function love.load()
   -- Set the window title to Snake
@@ -18,6 +18,13 @@ function love.load()
   -- Set fonts
   smallFont = love.graphics.newFont('assets/retro-gaming.ttf', 20)
   largeFont = love.graphics.newFont('assets/retro-gaming.ttf', 40)
+
+  -- Load audios
+  hit = love.audio.newSource('assets/hit.wav', 'static')
+  collect = love.audio.newSource('assets/collect.wav', 'static')
+
+  hit:setVolume(0.5)
+  collect:setVolume(0.5)
 
   -- Use OS time to generate random numbers
   math.randomseed(os.time())
@@ -107,6 +114,9 @@ function love.update(dt)
 
         -- Add 1 to the score
         score = score + 1
+
+        -- Play collect audio
+        collect:play()
       end
 
       if
@@ -117,6 +127,9 @@ function love.update(dt)
       then
         -- Snake hits left wall
         gameState = 'done'
+
+        -- Play hit audio
+        hit:play()
       else
         -- Move the snake, only if it hasn't collide
         table.insert(snake, 1, { x = snakeX, y = snakeY })
