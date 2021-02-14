@@ -1,3 +1,4 @@
+-- Create the Snake class
 Snake = {}
 
 function Snake:new(x, y)
@@ -41,4 +42,33 @@ function Snake:isAt(x, y, start)
   end
 
   return false
+end
+
+function Snake:collides(fruit)
+  return self.x == fruit.x and self.y == fruit.y
+end
+
+function Snake:hitWall()
+  return (
+    snake.x < 0 or snake.y < 0 or
+    snake.x > VIRTUAL_WIDTH - BLOCK_SIZE or
+    snake.y > VIRTUAL_HEIGHT - BLOCK_SIZE
+  )
+end
+
+function Snake:update(dx, dy)
+  -- Updates the snake's real velocity
+  self.dx = dx
+  self.dy = dy
+
+  -- Change snake's head position
+  self.x = self.x + self.dx
+  self.y = self.y + self.dy
+end
+
+function Snake:render()
+  for i in pairs(self.body) do
+    love.graphics.setColor(236 / 255, 235 / 255, 228 / 255)
+    love.graphics.rectangle('fill', self.body[i]['x'], self.body[i]['y'], BLOCK_SIZE, BLOCK_SIZE)
+  end
 end
