@@ -1,3 +1,6 @@
+require 'Snake'
+require 'Fruit'
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
@@ -74,19 +77,19 @@ function love.update(dt)
   timer = timer + dt
 
   if gameState == 'play' then
-    if love.keyboard.isDown('up') and snakeDY == 0 then
+    if love.keyboard.isDown('up') and snake.dy == 0 then
       -- If user press the up key, snake goes up
       intSnakeDX = 0
       intSnakeDY = -blockSize
-    elseif love.keyboard.isDown('down') and snakeDY == 0 then
+    elseif love.keyboard.isDown('down') and snake.dy == 0 then
       -- If user press the down key, snake goes down
       intSnakeDX = 0
       intSnakeDY = blockSize
-    elseif love.keyboard.isDown('left') and snakeDX == 0 then
+    elseif love.keyboard.isDown('left') and snake.dx == 0 then
       -- If user press the left key, snake goes left
       intSnakeDX = -blockSize
       intSnakeDY = 0
-    elseif love.keyboard.isDown('right') and snakeDX == 0 then
+    elseif love.keyboard.isDown('right') and snake.dx == 0 then
       -- If user press the right key, snake goes right
       intSnakeDX = blockSize
       intSnakeDY = 0
@@ -97,17 +100,17 @@ function love.update(dt)
       timer = 0
 
       -- Updates the snake's real velocity
-      snakeDX = intSnakeDX
-      snakeDY = intSnakeDY
+      snake.dx = intSnakeDX
+      snake.dy = intSnakeDY
 
       -- Change snake's head position
-      snakeX = snakeX + snakeDX
-      snakeY = snakeY + snakeDY
+      snake.x = snake.x + snake.dx
+      snake.y = snake.y + snake.dy
 
       -- Eat fruit
-      if snakeX == fruitX and snakeY == fruitY then
+      if snake.x == fruit.x and snake.y == fruit.y then
         -- Snake grows
-        growSnake()
+        snake:grow()
 
         -- Fruit is reset
         resetFruit()
@@ -120,10 +123,10 @@ function love.update(dt)
       end
 
       if
-        snakeX < 0 or snakeY < 0 or
-        snakeX > WINDOW_WIDTH - blockSize or
-        snakeY > WINDOW_HEIGHT - blockSize or
-        isSnakeAt(snakeX, snakeY, 2)
+        snake.x < 0 or snake.y < 0 or
+        snake.x > WINDOW_WIDTH - blockSize or
+        snake.y > WINDOW_HEIGHT - blockSize or
+        snake:isAt(snake.x, snake.y, 2)
       then
         -- Snake hits left wall
         gameState = 'done'
@@ -132,8 +135,7 @@ function love.update(dt)
         hit:play()
       else
         -- Move the snake, only if it hasn't collide
-        table.insert(snake, 1, { x = snakeX, y = snakeY })
-        table.remove(snake)
+        snake:move()
       end
     end
   end
@@ -146,12 +148,12 @@ function love.draw()
   if gameState == 'play' then
     -- Render Fruit
     love.graphics.setColor(239 / 255, 35 / 255, 60 / 255)
-    love.graphics.rectangle('fill', fruitX, fruitY, blockSize, blockSize)
+    love.graphics.rectangle('fill', fruit.x, fruit.y, blockSize, blockSize)
 
     -- Render Snake
-    for i in pairs(snake) do
+    for i in pairs(snake.body) do
       love.graphics.setColor(236 / 255, 235 / 255, 228 / 255)
-      love.graphics.rectangle('fill', snake[i]['x'], snake[i]['y'], blockSize, blockSize)
+      love.graphics.rectangle('fill', snake.body[i]['x'], snake.body[i]['y'], blockSize, blockSize)
     end
 
     -- Display score
@@ -159,10 +161,12 @@ function love.draw()
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
     love.graphics.print('Score: ' .. score, blockSize, blockSize)
   elseif gameState == 'pause' then
+    -- Display pause screen
     love.graphics.setFont(largeFont)
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
     love.graphics.printf('Game paused', 0, (WINDOW_HEIGHT / 2) - 20, WINDOW_WIDTH, 'center')
   elseif gameState == 'start' then
+    -- Display start screen
     love.graphics.setFont(largeFont)
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
     love.graphics.printf('Welcome to Snake', 0, (WINDOW_HEIGHT / 2) - 60, WINDOW_WIDTH, 'center')
@@ -170,6 +174,7 @@ function love.draw()
     love.graphics.setFont(smallFont)
     love.graphics.printf('Press [enter] to play!', 0, (WINDOW_HEIGHT / 2) + 10, WINDOW_WIDTH, 'center')
   elseif gameState == 'done' then
+    -- Display end game screen
     love.graphics.setFont(largeFont)
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
     love.graphics.printf('You\'ve scored: ' .. score, 0, (WINDOW_HEIGHT / 2) - 60, WINDOW_WIDTH, 'center')
@@ -179,53 +184,23 @@ function love.draw()
   end
 end
 
-function isSnakeAt(x, y, start)
-  local tableSize = table.getn(snake)
-
-  for i = start, tableSize do
-    if x == snake[i]['x'] and y == snake[i]['y'] then
-      return true
-    end
-  end
-
-  return false
-end
-
-function growSnake()
-  local tableSize = table.getn(snake)
-  local lastPosition = snake[tableSize]
-
-  for i = 1, 5 do
-    table.insert(snake, { x = lastPosition['x'], y = lastPosition['y'] })
-  end
-end
-
 function resetSnake()
   local pos = getRandomPosition()
-
-  snakeX = pos['x']
-  snakeY = pos['y']
-
-  snake = {}
 
   -- Intended velocity to respect the timer update
   intSnakeDX = 0
   intSnakeDY = 0
 
-  -- Snake's real velocity
-  snakeDX = 0
-  snakeDY = 0
-
-  table.insert(snake, { x = snakeX, y = snakeY })
+  -- Create snake instance
+  snake = Snake:new(pos['x'], pos['y'])
 end
 
 function resetFruit()
   repeat
     local pos = getRandomPosition()
 
-    fruitX = pos['x']
-    fruitY = pos['y']
-  until( not isSnakeAt(fruitX, fruitY, 1) )
+    fruit = Fruit:new(pos['x'], pos['y'])
+  until( not snake:isAt(fruit.x, fruit.y, 1) )
 end
 
 function getRandomPosition()
