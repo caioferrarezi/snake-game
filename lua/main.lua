@@ -55,6 +55,7 @@ function love.load()
 
   -- Time to control frame update
   timer = 0
+  updateRate = 0.12
 
   -- Game state control
   gameState = 'start'
@@ -84,6 +85,7 @@ function love.keypressed(key)
       resetSnake()
       resetFruit()
       score = 0
+      updateRate = 0.12
     end
   end
 end
@@ -111,8 +113,8 @@ function love.update(dt)
       intSnakeDY = 0
     end
 
-  -- Updates every 0.12 seconds
-    if timer >= 0.12 then
+  -- Updates when timer is greater than o equal to update rate seconds
+    if timer >= updateRate then
       timer = 0
 
       -- Updates the snake's real velocity
@@ -133,6 +135,10 @@ function love.update(dt)
 
         -- Add 1 to the score
         score = score + 1
+
+        -- Remove 0.001 second from update rate
+        -- with 0.08 second being the max value
+        updateRate = math.max(updateRate - 0.001, 0.08)
 
         -- Play collect audio
         collect:play()
