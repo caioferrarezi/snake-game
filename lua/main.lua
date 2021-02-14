@@ -1,6 +1,11 @@
 require 'Snake'
 require 'Fruit'
 
+push = require 'push'
+
+VIRTUAL_WIDTH = 960
+VIRTUAL_HEIGHT= 540
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
@@ -12,9 +17,16 @@ function love.load()
   love.graphics.setDefaultFilter('nearest', 'nearest')
 
   -- Set the window config
-  love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+
+  -- love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+  --   fullscreen = false,
+  --   resizable = false,
+  --   vsync = true
+  -- })
+
+  push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
     fullscreen = false,
-    resizable = false,
+    resizable = true,
     vsync = true
   })
 
@@ -49,6 +61,10 @@ function love.load()
 
   -- Store game score
   score = 0
+end
+
+function love.resize(width, height)
+  push:resize(width, height)
 end
 
 function love.keypressed(key)
@@ -124,8 +140,8 @@ function love.update(dt)
 
       if
         snake.x < 0 or snake.y < 0 or
-        snake.x > WINDOW_WIDTH - blockSize or
-        snake.y > WINDOW_HEIGHT - blockSize or
+        snake.x > VIRTUAL_WIDTH - blockSize or
+        snake.y > VIRTUAL_HEIGHT - blockSize or
         snake:isAt(snake.x, snake.y, 2)
       then
         -- Snake hits left wall
@@ -142,6 +158,8 @@ function love.update(dt)
 end
 
 function love.draw()
+  push:start()
+
   -- Clear screen
   love.graphics.clear(34 / 255, 34 / 255, 34 / 255)
 
@@ -164,24 +182,26 @@ function love.draw()
     -- Display pause screen
     love.graphics.setFont(largeFont)
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
-    love.graphics.printf('Game paused', 0, (WINDOW_HEIGHT / 2) - 20, WINDOW_WIDTH, 'center')
+    love.graphics.printf('Game paused', 0, (VIRTUAL_HEIGHT / 2) - 20, VIRTUAL_WIDTH, 'center')
   elseif gameState == 'start' then
     -- Display start screen
     love.graphics.setFont(largeFont)
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
-    love.graphics.printf('Welcome to Snake', 0, (WINDOW_HEIGHT / 2) - 60, WINDOW_WIDTH, 'center')
+    love.graphics.printf('Welcome to Snake', 0, (VIRTUAL_HEIGHT / 2) - 60, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setFont(smallFont)
-    love.graphics.printf('Press [enter] to play!', 0, (WINDOW_HEIGHT / 2) + 10, WINDOW_WIDTH, 'center')
+    love.graphics.printf('Press [enter] to play!', 0, (VIRTUAL_HEIGHT / 2) + 10, VIRTUAL_WIDTH, 'center')
   elseif gameState == 'done' then
     -- Display end game screen
     love.graphics.setFont(largeFont)
     love.graphics.setColor(87 / 255, 178 / 255, 124 / 255)
-    love.graphics.printf('You\'ve scored: ' .. score, 0, (WINDOW_HEIGHT / 2) - 60, WINDOW_WIDTH, 'center')
+    love.graphics.printf('You\'ve scored: ' .. score, 0, (VIRTUAL_HEIGHT / 2) - 60, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setFont(smallFont)
-    love.graphics.printf('Press [enter] to play again!', 0, (WINDOW_HEIGHT / 2) + 10, WINDOW_WIDTH, 'center')
+    love.graphics.printf('Press [enter] to play again!', 0, (VIRTUAL_HEIGHT / 2) + 10, VIRTUAL_WIDTH, 'center')
   end
+
+  push:finish()
 end
 
 function resetSnake()
@@ -204,8 +224,8 @@ function resetFruit()
 end
 
 function getRandomPosition()
-  local randomX = math.random(0, WINDOW_WIDTH)
-  local randomY = math.random(0, WINDOW_HEIGHT)
+  local randomX = math.random(0, VIRTUAL_WIDTH)
+  local randomY = math.random(0, VIRTUAL_HEIGHT)
 
   return {
     x = randomX - (randomX % blockSize),
