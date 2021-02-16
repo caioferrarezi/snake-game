@@ -38,8 +38,8 @@ function love.load()
   hit = love.audio.newSource('assets/hit.wav', 'static')
   collect = love.audio.newSource('assets/collect.wav', 'static')
 
-  hit:setVolume(0.5)
-  collect:setVolume(0.5)
+  hit:setVolume(0.3)
+  collect:setVolume(0.3)
 
   -- Use OS time to generate random numbers
   math.randomseed(os.time())
