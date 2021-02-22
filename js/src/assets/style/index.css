@@ -21,8 +21,7 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  max-width: 100%;
-  height: auto;
+  height: 90%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   image-rendering: -moz-crisp-edges;

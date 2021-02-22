@@ -1,5 +1,5 @@
-export const WIDTH = 800;
-export const HEIGHT = 600;
+export const WIDTH = 960;
+export const HEIGHT = 540;
 export const PIXEL_SIZE = 20;
 
 export const ELAPSED_INTERVAL = 100;
