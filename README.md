@@ -1,4 +1,4 @@
-# Snake Game :snake:
+# :snake: Snake Game 
 
 ![snake game screenshot](https://github.com/caioferrarezi/snake-game/blob/master/snake-game.png)
 
