@@ -15,3 +15,11 @@ $ love lua/
 ```
 
 Thank you! :tada:
+
+---
+
+<div align="center">
+Made with 🧑‍🚀 by Caio Ferrarezi <br><br>
+
+[<img src="https://img.shields.io/static/v1?style=flat-square&logo=linkedin&label=&message=LinkedIn&color=blue" alt="linkedin">](https://www.linkedin.com/in/caio-ferrarezi-414164b3/)
+</div>
